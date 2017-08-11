@@ -1,0 +1,64 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="DungeonStyle.css">
+
+
+    <script src="View.js"></script>
+    <script src="Model.js"></script>
+    <script src="jsonReader.js"></script>
+
+
+</head>
+<body>
+<div id="battleContainer">
+    <div id="foeContainer">
+    </div>
+
+    <div id="foeHp"></div>
+    <div id="foeArmor"></div>
+    <div id ="foeWeapon"></div>
+    <div id="lootBox"></div>
+    <div id="foeDice"></div>
+    <div id="foeHit"></div>
+    <div id="playerDice"></div>
+    <div id="playerHit"></div>
+    <button id="returnToDungeonButton" onclick="returnToDungeon() ">Return to the dungeon</button>
+    <div id="playerArmor"></div>
+    <div id="playerWeapon"></div>
+    <div id="playerContainer">
+    </div>
+
+    <button id="attackButton" onclick= attack()>Attack!</button>
+   <button  id="instaGibButton" onclick= instaGib()>Defeat the Foe!</button>
+</div>
+<div id="gameGridContainer"></div>
+<div id="playerInfoContainer">
+    <div id="logo"><img src="Media/Logo.png"></div>
+    <div id="hpCardContainer"></div>
+    <div id="goldContainer">
+    <div id="goldCount">
+0
+    </div>
+    <div id="goldChest">
+        <img src="Media/gold.png">
+    </div>
+
+    </div>
+    <div id ="lootBagContainer">
+        <div id="swordSpot"></div>
+        <div id ="keySpot"></div>
+
+    </div>
+
+</div>
+<audio id="sound" controls>
+    <source src="Media/yahoo.mp3" type="audio/mpeg">
+</audio>
+<div id="objectivesContainer">
+</div>
+</body>
+<script>document.getElementById("gameGridContainer").innerHTML = genGrid();</script>
+<script>makeClickable()</script>
+<script>genHPCard()</script>
+<script>displayObjectives()</script>
+</html>
