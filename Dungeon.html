@@ -11,9 +11,7 @@
 </head>
 <body>
 <div id="battleContainer">
-    <div id="foeContainer">
-    </div>
-
+    <div id="foeContainer"></div>
     <div id="foeHp"></div>
     <div id="foeArmor"></div>
     <div id ="foeWeapon"></div>
@@ -31,7 +29,9 @@
     <button id="attackButton" onclick= attack()>Attack!</button>
    <button  id="instaGibButton" onclick= instaGib()>Defeat the Foe!</button>
 </div>
+<div id="gameGridContainer2"></div>
 <div id="gameGridContainer"></div>
+<div id="tileSpawnBox" onclick = "genTile()"></div>
 <div id="playerInfoContainer">
     <div id="logo"><img src="Media/Logo.png"></div>
     <div id="hpCardContainer"></div>
@@ -51,14 +51,16 @@
     </div>
 
 </div>
+
 <audio id="sound" controls>
     <source src="Media/yahoo.mp3" type="audio/mpeg">
 </audio>
-<div id="objectivesContainer">
-</div>
+<!--<div id="objectivesContainer"></div>-->
 </body>
 <script>document.getElementById("gameGridContainer").innerHTML = genGrid();</script>
-<script>makeClickable()</script>
-<script>genHPCard()</script>
+<!--<script>document.getElementById("gameGridContainer2").innerHTML = genGrid2();</script>
 <script>displayObjectives()</script>
+<script>makeClickable()</script>-->
+<script>genHPCard()</script>
+
 </html>

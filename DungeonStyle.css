@@ -4,9 +4,8 @@ body{
 }
 /* Style for things about the game grid*/
 #gameGridContainer{
-
     height: 749px;
-    width: 800px;
+    width: 900px;
 }
 #gameGrid{
     border: solid black thin;
@@ -17,6 +16,31 @@ body{
     left: 100px;
 }
 .gameBoardCells{
+    width: 105px;
+    height: 105px;
+    text-align: center;
+    background-repeat: no-repeat;
+    padding: 0;
+}
+/* Up Stairs*/
+#gameGridContainer2{
+    display: none;
+    position: absolute;
+    height: 749px;
+    width: 800px;
+    z-index: 2;
+}
+#gameGrid2{
+
+    border: solid black thin;
+    width:630px;
+    height: 630px;
+    position: absolute;
+    table-layout: fixed;
+    left: 100px;
+
+}
+.gameBoardCells2{
     width: 105px;
     height: 105px;
     text-align: center;
@@ -96,7 +120,17 @@ body{
     background-repeat: no-repeat;
 }
 /*///////////////////////*/
-
+/*Style for tileSpawnBox*/
+#tileSpawnBox{
+    height: 105px;
+    width: 105px;
+    border: solid black;
+    position: absolute;
+    top: 525px;
+    left: 908px;
+    background-repeat: no-repeat;
+    background-image: url("Media/deck.png");
+}
 /*Style for the battle Display*/
 #battleContainer{
     display: none;
