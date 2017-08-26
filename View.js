@@ -49,6 +49,29 @@ var resources = {
 function genGrid(){
     var html="<table id='gameGrid'>";
     //var location = gameState.player.position;
+
+    for (var r=0; r<6;r++)
+    {
+        html += "<tr>";
+        for(var c=0;c<7;c++)
+        {
+            if(r===5 && c=== 3){
+                html += "<td class ='gameBoardCells' id='(" + r + ',' + c + ")' style= 'background-image:url(Media/startingTileOriginal.png)'><img src='Media/human.png'></td>";
+            }
+            else {
+                html += "<td class ='gameBoardCells' id='(" + r + ',' + c + ")' style= 'background-image:url(Media/blankTile.png)'></td>";
+            }
+        }
+        html += "</tr>";
+    }
+    html+="</table>";
+    return html;
+}
+
+//make a new gameState for the up stairs grid
+/*function genGrid2(){
+    var html="<table id='gameGrid2'>";
+    //var location = gameState.player.position;
     var playerImage;
     for (var r=0; r<6;r++)
     {
@@ -65,15 +88,15 @@ function genGrid(){
             }
             //match the input from the game state with its correct img in the source object.
             var temp = getTile(r,c);
-           var imgTile = resources.tileType[temp];
-            html+= "<td class ='gameBoardCells' id='("+r + ','+ c+")' style= 'background-image:url(Media/"+ imgTile +")'>" + playerImage +" </td>";
+            var imgTile = resources.tileType[temp];
+            html+= "<td class ='gameBoardCells2' id='("+r + ','+ c+")' style= 'background-image:url(Media/"+ imgTile +")'>" + playerImage +" </td>";
 
         }
         html += "</tr>";
     }
     html+="</table>";
     return html;
-}
+}*/
 function genHPCard(){
     var card = document.getElementById("hpCardContainer");
     var html = "<table id='hpCard'>";
@@ -96,119 +119,234 @@ function genHPCard(){
     cells[gameState.player_status.hp - 1].style.borderBottom ="black solid";
 
 }
-function displayObjectives(){
-    var displayTarget = document.getElementById("objectivesContainer");
 
-    displayTarget.innerHTML = "Objectives:<br><ol>";
-
-    displayTarget.innerHTML += "<li>Flip over tiles to explore the dungeon</li>";
-    displayTarget.innerHTML += "<li>Kill monsters to get gold</li>";
-    displayTarget.innerHTML += "<li>collect 25 gold, then return to start</li>";
-    displayTarget.innerHTML += "<li>Collect gear to help you in the dungeon</li>";
-
-    displayTarget.innerHTML +="</ol>";
-}
 ////////////////////////////////
 
 //control functions
+function genTile() {
+    //todo
+    ////finish tile cases
+    ////find a way for the new piece to make it to the game grid.....
+    var target = document.getElementById("tileSpawnBox");
+        //produce a random tile
+    var num = Math.floor(Math.random() * 10) + 1;
+    var tile;
+    switch (num) {
+            case (1):
+                tile = "Media/eastWest.png";
+                gameState.current_Tile.n = false;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = false;
+                gameState.current_Tile.w = true;
+                break;
+            case (2):
+                tile = "Media/northSouth.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = false;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = false;
+                break;
+            case (3):
+                tile = "Media/northEast.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = false;
+                gameState.current_Tile.w = false;
+                break;
+            case (4):
+                tile = "Media/northWest.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = false;
+                gameState.current_Tile.s = false;
+                gameState.current_Tile.w = true;
+                break;
+            case (5):
+                tile = "Media/eastSouth.png";
+                gameState.current_Tile.n = false;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = false;
+                break;
+            case (6):
+                tile = "Media/southWest.png";
+                gameState.current_Tile.n = false;
+                gameState.current_Tile.e = false;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = true;
+                break;
+            case (7):
+                tile = "Media/northEastSouth.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = false;
+                break;
+            case (8):
+                tile = "Media/eastSouthWest.png";
+                gameState.current_Tile.n = false;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = true;
+                break;
+            case (9):
+                tile = "Media/northSouthWest.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = false;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = true;
+                break;
+            case (10):
+                tile = "Media/northEastSouthWest.png";
+                gameState.current_Tile.n = true;
+                gameState.current_Tile.e = true;
+                gameState.current_Tile.s = true;
+                gameState.current_Tile.w = true;
+                break;
+        }
+        //show generated tile
+        target.innerHTML = "<img src =" + tile + ">";
+        target.onclick = "";
 
+    genTileOptions();
+}
+function genTileOptions(){
+
+var k =0;
+for(var i = 0; i<6;i++){
+    for(var j=0; j<7;j++){
+   var temp = gameState.grid_Placement_Options[i][j];
+   if (temp.available){
+    gameState.openSet[k] = temp;
+    k++;
+   }
+    }
+}
+//compare openSet with the generated tile to be placed and generate closed set
+    var closedSetIter = 0;
+for(var m =0; m < k; m++){
+
+    if (gameState.current_Tile.n && gameState.openSet[m].n) {
+        //match with a south opening
+        gameState.closedSet[closedSetIter] = gameState.openSet[m];
+        closedSetIter++;
+    }
+    else if (gameState.current_Tile.e && gameState.openSet[m].e){
+        //match with a west opening
+        gameState.closedSet[closedSetIter] = gameState.openSet[m];
+        closedSetIter++;
+    }
+    else if (gameState.current_Tile.s && gameState.openSet[m].s){
+        //match with a north opening
+        gameState.closedSet[closedSetIter] = gameState.openSet[m];
+        closedSetIter++;
+    }
+    else if (gameState.current_Tile.w && gameState.openSet[m].w){
+        //match with a east opening
+        gameState.closedSet[closedSetIter] = gameState.openSet[m];
+    }
+}
+//high light available placement for new tile
+for (var iter = 0; iter<gameState.closedSet.length; iter++){
+    var placementOptionLocation = gameState.closedSet[iter].location;
+    var placementOption = document.getElementById(placementOptionLocation);
+    placementOption.innerHTML = "you can place it here!";
+
+    //I don't know why this isn't working...
+    placementOption.onclick = placeTile;
+
+}
+}
+function placeTile(){
+
+console.log("placeTile was called");
+var col = this.cellIndex;
+var row = this. parentNode.rowIndex;
+//Move tile to selected square
+    var tile  = gameState.current_Tile;
+    gameState.grid_paths[row][col].flipped = true;
+    gameState.grid_paths[row][col].n = tile.n;
+    gameState.grid_paths[row][col].e = tile.e;
+    gameState.grid_paths[row][col].s = tile.s;
+    gameState.grid_paths[row][col].w = tile.w;
+    var deck = document.getElementById("tileSpawnBox");
+    //format image file name
+    var imageTitle = "Media/";
+    var caps = false;
+    if (tile.n){
+        imageTitle+= "north";
+        caps = true;
+    }
+    if(tile.e) {
+        if(caps){
+            imageTitle+="East";
+        }else {
+            imageTitle += "east";
+            caps = true;
+        }
+    }
+    if(tile.s) {
+
+       if(caps) {
+            imageTitle += "South";
+       }else {
+           imageTitle += "south";
+           caps = true
+       }
+    }
+    if(tile.w) {
+
+        if(caps) {
+            imageTitle += "West";
+        }else {
+            imageTitle += "west";
+        }
+    }
+    imageTitle += ".png";
+   var temp = document.getElementById("(" + row +","+col+")");
+   temp.style.backgroundImage = "url("+ imageTitle +")";
+
+   temp.onclick = move;
+    deck.innerHTML = "";
+    deck.onclick = genTile;
+    //clear placement option highlights
+    for(var i = 0; i <gameState.closedSet.length;i++) {
+        var option = document.getElementById(gameState.closedSet[i].location);
+            option.innerHTML = "";
+    }
+    //update grid_Placement_Options
+    gameState.grid_Placement_Options[row][col].available = false;
+    if (tile.n){
+
+      //  gameState.grid_Placement_Options[row-1][col].available = true;
+        gameState.grid_Placement_Options[row-1][col].s = true;
+    }
+    if(tile.e){
+
+       // gameState.grid_Placement_Options[row][col+1].available = true;
+        gameState.grid_Placement_Options[row][col+1].w = true;
+
+    }
+    if(tile.s){
+       // gameState.grid_Placement_Options[row+1][col].available = true;
+        gameState.grid_Placement_Options[row+1][col].n = true;
+
+    }
+    if(tile.w){
+        //gameState.grid_Placement_Options[row][col-1].availabe = true;
+        gameState.grid_Placement_Options[row][col-1].e = true;
+    }
+
+
+}
 //movement and tile flipping
 function clearClickableSettings(){
     var tableCells = document.getElementsByTagName("td");
-    for (i = 0; i<tableCells.length;i++){
+    for (var i = 0; i<tableCells.length;i++){
     tableCells[i].onclick = "";
     }
 }
-function makeClickable(){
-    var row = gameState.player_status.position[1];
-    var col = gameState.player_status.position[3];
-    //this takes care of the starting piece
-    var clickedSpace = document.getElementById("("+ row  +","+ col +")");
-        clickedSpace.onclick = move;
-        /////////
-       var temp = gameState.grid_paths[row][col];
-    if(temp.n){
-        --row;
-        var option1 = document.getElementById("("+ row  +","+ col +")");
-        if(!gameState.grid_paths[row][col].flipped)
-        option1.onclick = flip;
-        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
-            option1.onclick = battle;
-        }
-        else{
-            option1.onclick = move;
-        }
-        ++row;
-    }
-    if(temp.e){
-        ++col;
-        var option2 = document.getElementById("("+ row  +","+ col +")");
-        if(!gameState.grid_paths[row][col].flipped)
-        option2.onclick = flip;
-        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
 
-            option2.onclick = battle;
-        }
-        else{
-            option2.onclick = move;
-        }
-        --col;
-    }
-    if(temp.s){
-        ++row;
-        var option3 = document.getElementById("("+ row  +","+ col +")");
-        if(!gameState.grid_paths[row][col].flipped)
-        option3.onclick = flip;
-        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
 
-            option3.onclick = battle;
-        }
-        else{
-            option3.onclick = move;
-        }
-        --row;
-    }
-    if(temp.w){
-        --col;
-        var option4 = document.getElementById("("+ row  +","+ col +")");
-        if(!gameState.grid_paths[row][col].flipped)
-        option4.onclick = flip;
-        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
-
-            option4.onclick = battle;
-        }
-        else{
-            option4.onclick = move;
-        }
-        ++col;
-    }
-
-}
-function flip(){
-
-    var col = this.cellIndex;
-    var row = this.parentNode.rowIndex;
-    var temp = gameState.grid_paths[row][col];
-
-    if (temp.flipped === false) {
-        this.innerHTML = "";
-        temp.flipped = true;
-        this.onclick = move;
-        var cell = gameState.grid_encounters[row][col];
-        if( cell !=="") {
-            var imgInsert = resources.encounterType[cell];
-            this.innerHTML = "<img src= "+ imgInsert +">";
-
-            if(cell === "easy" || cell === "medium" || cell === "hard") {
-               this.onclick = battle;
-            }
-        }
-        }
-       else{
-           this.onclick = move;
-       }
-
-    }
 function move(){
     //save click location
     var col = this.cellIndex;
@@ -259,8 +397,8 @@ function move(){
         gameState.player_status.position = "("+row +","+col+")";
         var temp = this;
         temp.innerHTML = "<img class='playerImage' src='Media/human.png'>";
-        clearClickableSettings();
-        makeClickable();
+       // clearClickableSettings();
+        //makeClickable();
     }
     if (victory){
        gameOver(true);
@@ -459,3 +597,141 @@ function suicide(){
     updatePlayerDisplay();
     gameOver(false);
 }
+
+
+//elephant graveyard
+/*function genGrid(){
+var html="<table id='gameGrid'>";
+//var location = gameState.player.position;
+var playerImage;
+for (var r=0; r<6;r++)
+{
+    html += "<tr>";
+    for(var c=0;c<6;c++)
+    {
+        if(c=== 0 && r=== 5)
+        {
+            playerImage = "<img id='playerImage' src='Media/human.png'>";
+        }
+        else
+        {
+            playerImage = "<img class ='blank' src=Media/"+ resources.tileType.blank +">";
+        }
+        //match the input from the game state with its correct img in the source object.
+        var temp = getTile(r,c);
+        var imgTile = resources.tileType[temp];
+        html+= "<td class ='gameBoardCells' id='("+r + ','+ c+")' style= 'background-image:url(Media/"+ imgTile +")'>" + playerImage +" </td>";
+
+    }
+    html += "</tr>";
+}
+html+="</table>";
+return html;
+}
+
+
+function displayObjectives(){
+    var displayTarget = document.getElementById("objectivesContainer");
+
+    displayTarget.innerHTML = "Objectives:<br><ol>";
+
+    displayTarget.innerHTML += "<li>Flip over tiles to explore the dungeon</li>";
+    displayTarget.innerHTML += "<li>Kill monsters to get gold</li>";
+    displayTarget.innerHTML += "<li>collect 25 gold, then return to start</li>";
+    displayTarget.innerHTML += "<li>Collect gear to help you in the dungeon</li>";
+
+    displayTarget.innerHTML +="</ol>";
+}
+
+function flip(){
+
+    var col = this.cellIndex;
+    var row = this.parentNode.rowIndex;
+    var temp = gameState.grid_paths[row][col];
+
+    if (temp.flipped === false) {
+        this.innerHTML = "";
+        temp.flipped = true;
+        this.onclick = move;
+        var cell = gameState.grid_encounters[row][col];
+        if( cell !=="") {
+            var imgInsert = resources.encounterType[cell];
+            this.innerHTML = "<img src= "+ imgInsert +">";
+
+            if(cell === "easy" || cell === "medium" || cell === "hard") {
+               this.onclick = battle;
+            }
+        }
+        }
+       else{
+           this.onclick = move;
+       }
+
+    }
+
+    function makeClickable(){
+    var row = gameState.player_status.position[1];
+    var col = gameState.player_status.position[3];
+    //this takes care of the starting piece
+    var clickedSpace = document.getElementById("("+ row  +","+ col +")");
+        clickedSpace.onclick = move;
+        /////////
+       var temp = gameState.grid_paths[row][col];
+    if(temp.n){
+        --row;
+        var option1 = document.getElementById("("+ row  +","+ col +")");
+        if(!gameState.grid_paths[row][col].flipped)
+        option1.onclick = flip;
+        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
+            option1.onclick = battle;
+        }
+        else{
+            option1.onclick = move;
+        }
+        ++row;
+    }
+    if(temp.e){
+        ++col;
+        var option2 = document.getElementById("("+ row  +","+ col +")");
+        if(!gameState.grid_paths[row][col].flipped)
+        option2.onclick = flip;
+        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
+
+            option2.onclick = battle;
+        }
+        else{
+            option2.onclick = move;
+        }
+        --col;
+    }
+    if(temp.s){
+        ++row;
+        var option3 = document.getElementById("("+ row  +","+ col +")");
+        if(!gameState.grid_paths[row][col].flipped)
+        option3.onclick = flip;
+        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
+
+            option3.onclick = battle;
+        }
+        else{
+            option3.onclick = move;
+        }
+        --row;
+    }
+    if(temp.w){
+        --col;
+        var option4 = document.getElementById("("+ row  +","+ col +")");
+        if(!gameState.grid_paths[row][col].flipped)
+        option4.onclick = flip;
+        else if (gameState.grid_encounters[row][col]=== "easy" || gameState.grid_encounters[row][col]=== "medium" || gameState.grid_encounters[row][col]=== "hard" ){
+
+            option4.onclick = battle;
+        }
+        else{
+            option4.onclick = move;
+        }
+        ++col;
+    }
+
+}
+    */
