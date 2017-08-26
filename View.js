@@ -249,7 +249,10 @@ for(var m =0; m < k; m++){
 for (var iter = 0; iter<gameState.closedSet.length; iter++){
     var placementOptionLocation = gameState.closedSet[iter].location;
     var placementOption = document.getElementById(placementOptionLocation);
-    placementOption.innerHTML = "you can place it here!";
+    placementOption.style.opacity = .5;
+    placementOption.innerHTML = "<img src =" + "Media/Sponge_Thumbs_Up_Sized.png" + ">";
+
+    //placementOption.innerHTML = "you cannot place it here!";
 
     //I don't know why this isn't working...
     placementOption.onclick = placeTile;
